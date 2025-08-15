@@ -13,7 +13,6 @@
             :items="clients"
             item-key="id"
             class="elevation-1"
-            :dense="true"
           >
             <template v-slot:item.actions="{ item }">
               <v-btn color="blue" small @click="openModal(item)">Editar</v-btn>
@@ -29,6 +28,7 @@
               <v-card-text>
                 <v-text-field v-model="editedClient.name" label="Nombre"></v-text-field>
                 <v-text-field v-model="editedClient.lastName" label="Apellido"></v-text-field>
+                <v-text-field v-model="editedClient.country" label="País"></v-text-field>
                 <v-text-field v-model="editedClient.email" label="Email"></v-text-field>
                 <v-text-field v-model="editedClient.phoneNumber" label="Teléfono"></v-text-field>
               </v-card-text>
@@ -63,7 +63,7 @@ export default {
     return {
       logo,  // app logo
       headers: [ // colum table
-        { text: 'name', value: 'name' },
+        { text: 'Nombre', value: 'name' },
         { text: 'lastName', value: 'lastName' },
         { text: 'country', value: 'country' },
         { text: 'email', value: 'email' },
@@ -89,13 +89,19 @@ export default {
   },
     update(cliente) {
     const newName = prompt("Nombre:", cliente.name)
+    const newLastName = prompt("Email:", cliente.lastName)
+    const newCountry = prompt("Email:", cliente.country)
     const newEmail = prompt("Email:", cliente.email)
+    const newPhoneNumber = prompt("Email:", cliente.phoneNumber)
     
-    if (newName && newEmail) {
+    if (newName && newEmail && newLastName && newCountry && newPhoneNumber) {
       this.updateClient({
         id: cliente.id,
         name: newName,
-        email: newEmail
+        lastName: newLastName,
+        country: newCountry,
+        email: newEmail,
+        phoneNumber: newPhoneNumber
       })
     }
   }
