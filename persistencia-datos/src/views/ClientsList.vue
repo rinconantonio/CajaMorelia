@@ -6,8 +6,8 @@
       <v-col cols="12" >
         <h1>Clientes</h1>
         
-        <!-- Tabla de clientes -->
         <div style="overflow-x:auto;">
+          <!-- start clients table -->
           <v-data-table
             :headers="headers"
             :items="clients"
@@ -16,10 +16,31 @@
             :dense="true"
           >
             <template v-slot:item.actions="{ item }">
-              <v-btn color="blue" small @click="updateClient(item.id)">Editar</v-btn>
+              <v-btn color="blue" small @click="openModal(item)">Editar</v-btn>
               <v-btn color="red" small @click="deleteClient(item.id)">Borrar</v-btn>
             </template>
           </v-data-table>
+          <!-- ends clients table -->
+
+          <!-- starts modal edit -->
+          <v-dialog v-model="showModal" max-width="500">
+            <v-card>
+              <v-card-title>Editar Cliente</v-card-title>
+              <v-card-text>
+                <v-text-field v-model="editedClient.name" label="Nombre"></v-text-field>
+                <v-text-field v-model="editedClient.lastName" label="Apellido"></v-text-field>
+                <v-text-field v-model="editedClient.email" label="Email"></v-text-field>
+                <v-text-field v-model="editedClient.phoneNumber" label="Teléfono"></v-text-field>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text @click="closeModal">Cancelar</v-btn>
+                <v-btn color="green darken-1" text @click="saveChanges">Guardar</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+          <!-- ends modal edit -->
+
         </div>
       </v-col>
     </v-row>
@@ -44,17 +65,40 @@ export default {
       headers: [ // colum table
         { text: 'name', value: 'name' },
         { text: 'lastName', value: 'lastName' },
+        { text: 'country', value: 'country' },
         { text: 'email', value: 'email' },
         { text: 'phoneNumber', value: 'phoneNumber' },
         { text: 'actions', value: 'actions', sortable: false }
-      ]
+      ],
+      showModal: false,      // manipulate modal visibility
+      editedClient: null     // aux from the client who will be edited
     }
   },
   methods: {
-    ...mapActions(['deleteClient']),
-    editar(id) {
-      console.log('Editar cliente con ID:', id)
+    ...mapActions(['deleteClient', 'updateClient']),
+    openModal(cliente) {
+    this.editedClient = { ...cliente } // copy client who will be edited
+    this.showModal = true
+  },
+  saveChanges() {
+    this.updateClient(this.editedClient) // call vuex
+    this.showModal = false               // close modall
+  }, 
+  closeModal() {
+    this.showModal = false
+  },
+    update(cliente) {
+    const newName = prompt("Nombre:", cliente.name)
+    const newEmail = prompt("Email:", cliente.email)
+    
+    if (newName && newEmail) {
+      this.updateClient({
+        id: cliente.id,
+        name: newName,
+        email: newEmail
+      })
     }
+  }
   }
 }
 </script>
